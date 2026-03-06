@@ -1,0 +1,24 @@
+# =============================================================================
+# .gitignore — Files that should NOT be committed to the repository
+# =============================================================================
+
+# ── Secrets & Credentials ──
+# NEVER commit these — they grant access to your infrastructure
+*.pem
+.env
+
+# ── Node.js ──
+node_modules/
+npm-debug.log*
+
+# ── Uploaded files ──
+uploads/
+
+# ── OS generated files ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE ──
+.vscode/
+.idea/

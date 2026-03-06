@@ -1,0 +1,31 @@
+{
+    "name": "resume-idcard-frontend",
+    "version": "1.0.0",
+    "description": "Frontend UI for the Resume to Digital ID Card Generator. Upload resumes and view generated ID cards.",
+    "private": true,
+    "dependencies": {
+        "html2canvas": "^1.4.1",
+        "pdfjs-dist": "^3.11.174",
+        "qrcode": "^1.5.3",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-scripts": "5.0.1"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
+}

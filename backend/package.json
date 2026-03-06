@@ -1,0 +1,20 @@
+{
+  "name": "resume-idcard-backend",
+  "version": "1.0.0",
+  "description": "Backend API for the Resume to Digital ID Card Generator. Handles PDF upload, text extraction, QR code generation, and MongoDB storage.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.6.3",
+    "multer": "^1.4.5-lts.1",
+    "pdf-parse": "^1.1.1",
+    "qrcode": "^1.5.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "@google/genai": "^1.0.0"
+  }
+}

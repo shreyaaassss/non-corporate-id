@@ -1,0 +1,94 @@
+# =============================================================================
+# docker-compose.yml — Orchestrates the entire Resume ID Card application
+# =============================================================================
+# This file defines THREE services (containers) that work together:
+#   1. frontend  — React app served on port 3000
+#   2. backend   — Express API served on port 5000
+#   3. mongodb   — Database on port 27017
+#
+# HOW TO RUN:
+#   docker-compose up --build
+#
+# HOW TO STOP:
+#   Ctrl+C, then: docker-compose down
+#
+# KEY CONCEPTS FOR EXAMINER:
+#   - All services share a custom network (idcard-network) so they can
+#     find each other by service name (e.g., "mongodb" instead of an IP).
+#   - Volumes persist data across container restarts.
+#   - depends_on ensures containers start in the right order.
+# =============================================================================
+
+version: "3.8" # Compose file format version — 3.8 supports all modern features
+
+services:
+  # ---------------------------------------------------------------------------
+  # MongoDB — The database layer
+  # ---------------------------------------------------------------------------
+  # Stores ID card records (name, skills, domain, QR codes, etc.)
+  # Other containers reach it at mongodb:27017 (Docker internal DNS)
+  mongodb:
+    image: mongo:7             # Official MongoDB image, version 7
+    container_name: idcard-mongodb
+    ports:
+      - "27017:27017"          # Expose MongoDB port to host (for debugging)
+    volumes:
+      - mongo-data:/data/db    # Named volume — data survives container restarts
+    networks:
+      - idcard-network         # Connect to our custom network
+    restart: unless-stopped    # Auto-restart unless manually stopped
+
+  # ---------------------------------------------------------------------------
+  # Backend — Express.js API server
+  # ---------------------------------------------------------------------------
+  # Handles file uploads, PDF parsing, QR generation, and database operations
+  backend:
+    build:
+      context: ./backend       # Build from the backend/ directory
+      dockerfile: Dockerfile   # Use backend/Dockerfile
+    container_name: idcard-backend
+    ports:
+      - "5000:5000"            # Map host port 5000 → container port 5000
+    volumes:
+      - ./uploads:/app/uploads # Bind mount — uploaded files persist on host
+    env_file:
+      - .env                   # Load environment variables from .env file
+    depends_on:
+      - mongodb                # Wait for MongoDB to start first
+    networks:
+      - idcard-network
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Frontend — React application
+  # ---------------------------------------------------------------------------
+  # The user-facing web interface for uploading resumes and viewing ID cards
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: idcard-frontend
+    ports:
+      - "3000:3000"            # Map host port 3000 → container port 3000
+    depends_on:
+      - backend                # Wait for backend to be available
+    networks:
+      - idcard-network
+    restart: unless-stopped
+
+# =============================================================================
+# Named Volumes
+# =============================================================================
+# Named volumes are managed by Docker and persist even when containers are
+# removed. This is how MongoDB keeps its data between restarts.
+volumes:
+  mongo-data:
+
+# =============================================================================
+# Custom Network
+# =============================================================================
+# All three containers join this network. Docker provides internal DNS, so
+# the backend can reach MongoDB at "mongodb:27017" instead of needing an IP.
+networks:
+  idcard-network:
+    driver: bridge             # Default network driver — containers on same host
